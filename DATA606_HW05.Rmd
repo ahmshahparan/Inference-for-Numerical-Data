@@ -1,0 +1,189 @@
+---
+title: "DATA 606 Homework 05"
+author: "A H M Shahparan"
+date: "3/25/2018"
+output: html_document
+---
+
+###Chapter 5 - Inference for Numerical Data
+
+#####5.6 Working backwards, Part II.
+A 90% confidence interval for a population mean is (65, 77). The population distribution is approximately normal and the population standard deviation is unknown. This confidence interval is based on a simple random sample of 25 observations. Calculate the sample mean, the margin of error, and the sample standard deviation.
+
+Sample Mean:
+```{r}
+n <- 25
+x1 <- 65
+x2 <- 77
+
+sm <- (x2 + x1) / 2
+sm
+# Smaple mean is 71
+```
+Margin of Error:
+```{r}
+n <- 25
+x1 <- 65
+x2 <- 77
+
+me <- (x2 - x1) / 2
+me
+# Margin of error is 6
+```
+Sample Standard Deviation:
+```{r}
+df <- 25 - 1
+p <- 0.9
+t_index <- p + (1 - p)/2
+t_val <- qt(t_index, df)
+se <- me / t_val
+sd <- se * sqrt(n)
+sd
+# Sample Standard Deviation is 17.53481
+```
+
+####5.14 SAT scores.
+SAT scores of students at an Ivy League college are distributed with a standard deviation of 250 points. Two statistics students, Raina and Luke, want to estimate the average SAT score of students at this college as part of a class project. They want their margin of error to be no more than 25 points.
+
+(a) Raina wants to use a 90% confidence interval. How large a sample should she collect?
+```{r}
+me = 25
+ssd = 250
+z = 1.65
+x = ((ssd*1.65)/me)^2
+x
+# The sample size should be 273 students.
+```
+(b) Luke wants to use a 99% confidence interval. Without calculating the actual sample size, determine whether his sample should be larger or smaller than Raina’s, and explain your reasoning.
+
+As Luke wants a narrower confidence interval, he needs to collect a larger sample to have higher confidence.
+
+(c) Calculate the minimum required sample size for Luke.
+```{r}
+z <- 2.575 # 99% Confidence interval
+me <- 25
+sd <- 250
+
+n <- ((z * sd) / me ) ^ 2
+n
+# Minimum required sample size for Luke is 664 students
+```
+
+####5.20 High School and Beyond, Part I.
+The National Center of Education Statistics conducted a survey of high school seniors, collecting test data on reading, writing, and several other subjects. Here we examine a simple random sample of 200 students from this survey. Side-by-side box plots of reading and writing scores as well as a histogram of the differences in scores are shown below.
+
+(a) Is there a clear difference in the average reading and writing scores?
+
+I do not see a clear difference in the average of the reading and writing scores. Sample variability introduced some minon differences.
+
+(b) Are the reading and writing scores of each student independent of each other?
+
+I would say that the scores are independent of each student but not of each score, that is reading and writing scores are not independent of each other for each student.
+
+(c) Create hypotheses appropriate for the following research question: is there an evident difference in the average scores of students in the reading and writing exam?
+
+H0:μread−write=0 (There is no difference in the average scores in reading and writing.)</br>
+HA:μread−write≠0 (There is a difference in average scores.)
+
+(d) Check the conditions required to complete this test.
+
+Students must be independent of each other-> Yes</br>
+Nearly normal distribution-> Yes</br> 
+Sample size less than 10% of population-> Yes
+
+(e) The average observed difference in scores is x¯read−x¯write=−0.545, and the standard deviation of the differences is 8.887 points. Do these data provide convincing evidence of a difference between the average scores on the two exams?
+```{r}
+sd_diff <- 8.887
+mu_diff <- -0.545
+n <- 200
+
+se_diff <- sd_diff / sqrt(n)
+t_value <- (mu_diff - 0) / se_diff
+
+df <- n - 1
+p <- pt(t_value, df = df)
+p
+```
+The P-value fails to be smaller than 5%. We reject the alternative Hypothesis in favor of the null.
+
+(f) What type of error might we have made? Explain what the error means in the context of the application.
+
+Since we did not reject the null hypothesis, we may run into a type II error.
+
+(g) Based on the results of this hypothesis test, would you expect a confidence interval for the average difference between the reading and writing scores to include 0? Explain your reasoning.
+
+0 is the best possible result to reject the alternative hypothesis, which we did. I would expect 0 to be in the confidence interval.
+
+####5.32 Fuel efficiency of manual and automatic cars, Part I.
+Each year the US Environmental Protection Agency (EPA) releases fuel economy data on cars manufactured in that year. Below are summary statistics on fuel efficiency (in miles/gallon) from random samples of cars with manual and automatic transmissions manufactured in 2012. Do these data provide strong evidence of a difference between the average fuel efficiency of cars with manual and automatic transmissions in terms of their average city mileage? Assume that conditions for inference are satisfied
+
+The hypotheses for this test are as follows:
+
+H0: The difference of average miles is equal to zero.</br>
+HA: The difference of average miles is NOT equal to zero.
+
+From the text we have as follows:
+```{r}
+x = 26
+auto_mean = 16.12
+manual_mean = 19.85
+auto_sd = 3.58
+manual_sd = 4.51
+diffOfMeans = auto_mean - manual_mean
+sE = sqrt((auto_sd^2/x)+(manual_sd^2/x))
+t = (diffOfMeans)/(sE)
+p = pt(t,df=25)*2
+p
+```
+p-value is less than 0.05. We reject H0 in favor of HA Which means we’ve detected a difference in automatic vs manual car fuel efficiency.
+
+####5.48 Work hours and education.
+
+(a) Write hypotheses for evaluating whether the average number of hours worked varies across the five groups.
+
+H0 : The means of each group are equal
+HA : The means of each group are not equal
+
+(b) Check conditions and describe any assumptions you must make to proceed with the test.
+
+Observations independent of each other. Samples are 10% or less of the population and The survey is random. Sample sizes greater than 30 to prevent too much skew.
+
+(c) Below is part of the output associated with this test. Fill in the empty cells.
+
+Assume confidence interval of 95%, α=0.05. Since p−value=0.0682>α, we fail to reject H0.
+```{r}
+# Store given values
+k <- 5
+n <- 1172
+MSG <- 501.54
+SSE <- 267382
+p <- 0.0682
+
+# Find Df
+dfG <- k-1
+dfE <- n-k
+dfT <- dfG + dfE
+df <- c(dfG, dfE, dfT)
+
+# Find Sum Sq
+SSG <- dfG * MSG
+SST <- SSG + SSE
+SS <- c(SSG, SSE, SST)
+
+# Find Mean Sq
+MSE <- SSE / dfE
+MS <- c(MSG, MSE, NA)
+
+# Find F-value
+Fv <- MSG / MSE
+
+# Combine all values and display
+result <- data.frame(df, SS, MS, c(Fv, NA, NA), c(p, NA, NA))
+colnames(result) <- c("Df", "Sum Sq", "Mean Sq", "F Value", "Pr(>F)")
+rownames(result) <- c("degree", "Residuals", "Total")
+result
+```
+
+(d) What is the conclusion of the test?
+
+Since the p-value = 0.0682 is greater than 0.05, we conclude that there is no significant difference between the groups and the null hypothesis does not get rejected.
